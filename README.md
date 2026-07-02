@@ -21,7 +21,7 @@ High-performance, low-latency wearable telemetry system integrating an ESP32-S3 
 * **Power Distribution:** Single-point 3.3V rail distribution w/ localized bypass decoupling capacitors per IC.
 * **Communication:** Fast-mode I2C telemetry (SDA/SCL on GPIO4/5) + dedicated 12-bit SAR ADC channel (GPIO1).
 
-* ![PCB 3D Render](./pcb_3d.png)
+![PCB 3D Render](./pcb_3d.png)
 
 ---
 
