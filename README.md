@@ -44,11 +44,11 @@ The software is structured as an ESP-IDF project using FreeRTOS tasks to handle 
 ## Setting Up the Project
 
 ### 1. Hardware & Manufacturing
-* Production-ready manufacturing files are located directly in the root folder: `/hardware/` (Contains the Gerber `.zip` file for PCB printing).
+* Production-ready manufacturing files are located directly in the hardware directory: `/hardware/` (Contains the Gerber zip file for PCB fabrication).
 * Power and flashing are handled over the native USB-C interface on the ESP32-S3.
 
 ### 2. Compiling the Code
-The project uses the standard ESP-IDF build toolchain. 
+The project uses the standard ESP-IDF build toolchain.
 
 ```bash
 # Set up your local ESP-IDF environment tools
