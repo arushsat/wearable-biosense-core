@@ -1,0 +1,24 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Auto-backups and system logs
+*.bak
+*.log
+*~
+*.tmp
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Node
+node_modules/
+npm-debug.log
