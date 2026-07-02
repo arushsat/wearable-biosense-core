@@ -12,8 +12,7 @@ High-performance, low-latency wearable telemetry system integrating an ESP32-S3 
 
 ## 📐 System Architecture
 
-[Insert a clean block diagram showing: AD8232/MPU6050 -> ESP32-S3 -> Telemetry Engine]
-
+![System Schematic](./schematic.png)
 ---
 
 ## 🛠️ Hardware Specification
