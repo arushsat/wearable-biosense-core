@@ -12,8 +12,7 @@ High-performance, low-latency wearable telemetry system integrating an ESP32-S3 
 
 ## 📐 System Architecture
 
-![System Schematic]<img width="490" height="352" alt="schematic png" src="https://github.com/user-attachments/assets/a5793ef6-02d1-48a4-94b4-275f499afcb9" />
-g)
+<img width="490" height="352" alt="schematic png" src="https://github.com/user-attachments/assets/a5793ef6-02d1-48a4-94b4-275f499afcb9" /> 
 ---
 
 ## 🛠️ Hardware Specification
