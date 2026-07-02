@@ -9,7 +9,13 @@ High-performance, low-latency wearable telemetry system integrating an ESP32-S3 
 * **Safety:** Hardwired hardware interrupt lines for real-time lead-off detection (LOD+/-).
 
 ---
+##  Operational Logic
 
+* **Condition A:** Heart Rate Drop + Motionless (Supine) -> Log Sleep State.
+* **Condition B:** Heart Rate Drop + Sudden Inversion (Prone/Stomach) -> Trigger High-Priority Interrupt Alert.
+* **Core Loop:** ESP32-S3 core 0 processes raw analog ECG; core 1 calculates 6-DOF positional orientation vectors simultaneously.
+
+---
 ##  System Architecture
 
 ![System Schematic](./schematic.png)
