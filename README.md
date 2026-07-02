@@ -1,60 +1,66 @@
 # Wearable BioSense Core (Smart-SIDS-Guardian)
 
-High-performance, low-latency wearable telemetry system integrating an ESP32-S3 MCU with real-time biometric and kinematics acquisition pipelines. Designed for continuous infant health tracking w/ deterministic fault signaling.
+A hardware/software prototype for an infant smart-romper patch designed to track heart rate and sleeping position simultaneously. The system uses an ESP32-S3 to cross-reference heart monitor waveforms with accelerometer angles to flag dangerous sleeping positions (like rolling onto the stomach) in real time.
 
-##  System Highlights
-* **Core:** Dual-core Xtensa 32-bit LX7 MCU running @ 240MHz w/ integrated Wi-Fi & BLE 5.0.
-* **Biometrics:** AD8232 analog front-end for high-gain, low-noise ECG wave amplification.
-* **Kinematics:** MPU6050 6-axis IMU over 400kHz I2C bus tracking spatial orientation.
-* **Safety:** Hardwired hardware interrupt lines for real-time lead-off detection (LOD+/-).
+## Operational Logic & Conditions
+
+* **Normal Sleep State:** Stable heart rate + flat or side position -> Log baseline data over BLE.
+* **Critical Alert (Prone Roll):** Sudden drop/spike in heart rate + inversion/stomach orientation -> Trigger high-priority alert.
+* **Dual-Core Processing:** Core 0 runs the analog sampling loop for the heart monitor; Core 1 independently calculates the 6-DOF movement angles so the two sensors don't lag each other out.
+
+## System Overview & Components
+
+* **MCU:** ESP32-S3 (Dual-core Xtensa running @ 240MHz with Wi-Fi/BLE).
+* **Heart Monitor:** AD8232 analog front-end chip to amplify raw ECG signals from the patch.
+* **Motion Tracker:** MPU6050 6-axis IMU running over a 400kHz I2C bus to track body orientation.
+* **Hardware Safety:** Uses the AD8232's hardwired Lead-Off Detection (LOD+/-) pins connected to ESP32 interrupts to instantly know if a sensor patch unglued or fell off.
 
 ---
-##  Operational Logic
 
-* **Condition A:** Heart Rate Drop + Motionless (Supine) -> Log Sleep State.
-* **Condition B:** Heart Rate Drop + Sudden Inversion (Prone/Stomach) -> Trigger High-Priority Interrupt Alert.
-* **Core Loop:** ESP32-S3 core 0 processes raw analog ECG; core 1 calculates 6-DOF positional orientation vectors simultaneously.
-
----
-##  System Architecture
+## System Architecture
 
 ![System Schematic](./schematic.png)
 
 ---
 
-##  Hardware Specification
-* **PCB Layers:** 2-Layer FR4 | 1.6mm thickness | 1oz Copper.
-* **Signal Routing:** 10mil trace width minimum for low-power digital signal lines.
-* **Power Distribution:** Single-point 3.3V rail distribution w/ localized bypass decoupling capacitors per IC.
-* **Communication:** Fast-mode I2C telemetry (SDA/SCL on GPIO4/5) + dedicated 12-bit SAR ADC channel (GPIO1).
+## Hardware Specification
+
+* **PCB Layout:** 2-Layer FR4 board, 1.6mm thickness, 1oz Copper.
+* **Traces & Pours:** 10mil trace width for digital signals, with full Top and Bottom Ground planes poured around the analog sensor lines to shield against electrical noise.
+* **Pins Used:** Fast-mode I2C telemetry (SDA/SCL on GPIO4/GPIO5) and ADC channel 1 (GPIO1) for raw heart readings.
 
 ![PCB 3D Render](./pcb_3d.png)
 
 ---
 
-##  Firmware Architecture & Stack
-* **OS:** FreeRTOS environment w/ deterministic task prioritization.
-* **Task 1:** Analog sampling pipeline via DMA-driven ADC @ 250Hz (ECG processing).
-* **Task 2:** I2C sensor polling pipeline @ 100Hz (6-DOF inertial kinematics processing).
-* **Task 3:** Low-overhead BLE telemetry engine broadcasting condensed packet frames.
+## Firmware Architecture (FreeRTOS)
+
+The software is structured as an ESP-IDF project using FreeRTOS tasks to handle the timing loops:
+* **Task 1 (readHeartSensor):** Runs at 250Hz (every 4ms) to pull analog values from the ADC channel.
+* **Task 2 (readMotionSensor):** Runs at 100Hz (every 10ms) to poll the MPU6050 via I2C and update the tilt angles.
 
 ---
 
-##  Installation & Execution
+## Setting Up the Project
 
-### 1. Hardware Fabrication
-* Generate production files from `/hardware/gerber/`
-* Flash ESP32-S3 via USB-C native JTAG interface.
+### 1. Hardware & Manufacturing
+* Production-ready manufacturing files are located directly in the root folder: `/hardware/` (Contains the Gerber `.zip` file for PCB printing).
+* Power and flashing are handled over the native USB-C interface on the ESP32-S3.
 
-### 2. Firmware Compilation
+### 2. Compiling the Code
+The project uses the standard ESP-IDF build toolchain. 
+
 ```bash
-# Initialize ESP-IDF environment
+# Set up your local ESP-IDF environment tools
 . $HOME/export.sh
 
-# Clone and navigate to codebase
-git clone [https://github.com/yourusername/smart-sids-guardian.git](https://github.com/yourusername/smart-sids-guardian.git)
-cd smart-sids-guardian/firmware
+# Clone the repository
+git clone [https://github.com/arushsat/wearable-biosense-core.git](https://github.com/arushsat/wearable-biosense-core.git)
+cd wearable-biosense-core/firmware
 
-# Build & flash target MCU
+# Configure the target and build the binaries
 idf.py set-target esp32s3
-idf.py build flash monitor
+idf.py build
+
+# Flash to your board and open the serial monitor logs
+idf.py flash monitor
